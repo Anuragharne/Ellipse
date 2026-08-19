@@ -108,7 +108,7 @@ SUPABASE_URL=https://[project-ref].supabase.co
 SUPABASE_SERVICE_KEY=your-service-role-key
 
 # Mapbox (for GIS maps)
-NEXT_PUBLIC_MAPBOX_TOKEN=pk.your-mapbox-token
+NEXT_PUBLIC_MAPBOX_TOKEN=your-mapbox-token
 ```
 
 - [ ] **Step 4: Create `README.md` with project overview**
@@ -578,7 +578,7 @@ Add the Ellipse color tokens (lime, teal, forest, severity) and font families (P
 - [ ] **Step 5: Create `.env.example`**
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1
-NEXT_PUBLIC_MAPBOX_TOKEN=pk.your-mapbox-token
+NEXT_PUBLIC_MAPBOX_TOKEN=your-mapbox-token
 NEXT_PUBLIC_WS_URL=ws://localhost:3000
 ```
 

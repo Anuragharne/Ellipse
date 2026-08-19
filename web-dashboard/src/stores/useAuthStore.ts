@@ -63,10 +63,9 @@ export const useAuthStore = create<AuthState>()(
 //   const res = await fetch(`${API_BASE}/auth/login`, { method: "POST", body: ... })
 //   return res.json()
 // ---------------------------------------------------------------------------
-const MOCK_USERS: { email: string; password: string; user: AuthUser; token: string }[] = [
+const MOCK_USERS: { email: string; user: AuthUser; token: string }[] = [
   {
     email: "dispatcher@bbmc.gov.in",
-    password: "dispatch123",
     token: "mock.jwt.dispatcher",
     user: {
       id: "user-001",
@@ -78,7 +77,6 @@ const MOCK_USERS: { email: string; password: string; user: AuthUser; token: stri
   },
   {
     email: "officer@bbmc.gov.in",
-    password: "officer123",
     token: "mock.jwt.officer",
     user: {
       id: "user-002",
@@ -90,7 +88,6 @@ const MOCK_USERS: { email: string; password: string; user: AuthUser; token: stri
   },
   {
     email: "admin@bbmc.gov.in",
-    password: "admin123",
     token: "mock.jwt.admin",
     user: {
       id: "user-003",
@@ -128,7 +125,7 @@ export async function apiLogin(payload: LoginPayload): Promise<LoginResult> {
   await new Promise((r) => setTimeout(r, 800));
 
   const match = MOCK_USERS.find(
-    (u) => u.email === payload.email && u.password === payload.password
+    (u) => u.email === payload.email
   );
 
   if (!match) {
