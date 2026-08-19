@@ -127,11 +127,11 @@ npm run dev              # Runs on localhost:3001
 **`.env` file:**
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1
-NEXT_PUBLIC_MAPBOX_TOKEN=pk.your-mapbox-access-token
-NEXT_PUBLIC_WS_URL=ws://localhost:3000
+NEXT_PUBLIC_MAPTILER_KEY=your-maptiler-key
 ```
 
-Get a free Mapbox token at [mapbox.com](https://www.mapbox.com/) (50k map loads/month free).
+4. **MapTiler**
+   Get a free MapTiler key at [maptiler.com](https://www.maptiler.com/) (100k map loads/month free, no credit card required).
 
 ## 6. Mobile App Setup (Expo / React Native)
 ```bash
