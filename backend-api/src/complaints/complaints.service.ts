@@ -4,7 +4,7 @@ import { StorageService } from '../storage/storage.service';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class ComplaintsService {
@@ -20,7 +20,7 @@ export class ComplaintsService {
     }
 
     // 1. Upload photo to Supabase Storage
-    const filename = `${userId}/${uuidv4()}.jpg`;
+    const filename = `${userId}/${randomUUID()}.jpg`;
     const photoUrl = await this.storage.uploadPhoto(file.buffer, filename);
 
     // 2. Save complaint in DB

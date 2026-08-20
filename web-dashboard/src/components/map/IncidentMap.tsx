@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useRef, useEffect } from "react";
 import Map, { Marker, Popup, NavigationControl, MapRef } from "react-map-gl/maplibre";
+import type { StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useComplaintsStore, Complaint } from "@/stores/useComplaintsStore";
 import { useCrewsStore, CrewStatus } from "@/stores/useCrewsStore";
@@ -28,11 +29,11 @@ const CREW_COLORS: Record<CrewStatus, string> = {
 };
 
 export function IncidentMap({ showCrews = false }: { showCrews?: boolean } = {}) {
-  const mapStyle = useMemo(() => {
+  const mapStyle: StyleSpecification = useMemo(() => {
     const baseUrl = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png";
 
     return {
-      version: 8 as const,
+      version: 8,
       sources: {
         carto_base: {
           type: "raster",
