@@ -64,4 +64,19 @@ export class ComplaintsService {
       },
     });
   }
+
+  async findNearby() {
+    return this.prisma.complaint.findMany({
+      where: {
+        status: {
+          notIn: ['RESOLVED', 'REJECTED'],
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 100, // Limit to 100 for MVP
+      include: {
+        aiAnalysis: true,
+      },
+    });
+  }
 }

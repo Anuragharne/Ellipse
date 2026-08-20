@@ -38,4 +38,9 @@ export class ComplaintService {
     
     return response.data;
   }
+
+  static async getNearbyComplaints() {
+    const response = await api.get('/citizen/complaints/nearby');
+    return response.data;
+  }
 }

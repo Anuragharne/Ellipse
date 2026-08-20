@@ -52,6 +52,8 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 function RootLayoutNav() {
   const { token, isFirstLaunch } = useAuthStore();
   const segments = useSegments();
@@ -75,13 +77,15 @@ function RootLayoutNav() {
   }, [token, isFirstLaunch, segments]);
 
   return (
-    <ThemeProvider value={EllipseTheme}>
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.forest } }}>
-        <Stack.Screen name="onboarding" />
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={EllipseTheme}>
+        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.forest } }}>
+          <Stack.Screen name="onboarding" />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        </Stack>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

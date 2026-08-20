@@ -1,46 +1,133 @@
-import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { StyleSheet, TouchableOpacity, View, Text, ActivityIndicator } from 'react-native';
 import { useAuthStore } from '../../src/stores/auth.store';
 import { colors } from '../../src/theme/colors';
-import { useRouter } from 'expo-router';
-import { Camera } from 'lucide-react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
+import { Camera, MapPin, Navigation } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { ComplaintService } from '../../src/services/complaint.service';
+import { darkMapStyle } from '../../src/theme/mapStyle';
+
+interface Complaint {
+  id: string;
+  latitude: number;
+  longitude: number;
+  status: string;
+  createdAt: string;
+  aiAnalysis?: {
+    severityScore: number;
+    wasteTypes: string[];
+  };
+}
+
+const getSeverityColor = (score?: number, status?: string) => {
+  if (status === 'RESOLVED') return colors.lime;
+  if (!score) return colors.severityLow;
+  if (score >= 0.75) return colors.severityCritical;
+  if (score >= 0.5) return colors.severityHigh;
+  return colors.severityLow;
+};
 
 export default function TabOneScreen() {
-  const { logout, setIsFirstLaunch } = useAuthStore();
   const router = useRouter();
+  const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = ['15%', '50%', '90%'];
 
-  const handleResetOnboarding = () => {
-    logout();
-    setIsFirstLaunch(true); // Resets back to onboarding screen
+  const fetchComplaints = async () => {
+    try {
+      const data = await ComplaintService.getNearbyComplaints();
+      setComplaints(data);
+    } catch (error) {
+      console.error('Failed to fetch nearby complaints:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchComplaints();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home (Logged In)</Text>
-      
-      <View style={styles.content}>
-        <TouchableOpacity style={styles.fabContainer} onPress={() => router.push('/camera')}>
-          <LinearGradient
-            colors={[colors.lime, colors.limeMuted]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.fab}
+      <MapView
+        style={styles.map}
+        provider={PROVIDER_DEFAULT}
+        customMapStyle={darkMapStyle}
+        initialRegion={{
+          latitude: 40.7128, // Default to NYC or current location (can be updated with expo-location)
+          longitude: -74.0060,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
+        showsUserLocation={true}
+        showsMyLocationButton={false}
+      >
+        {complaints.map((complaint) => (
+          <Marker
+            key={complaint.id}
+            coordinate={{ latitude: complaint.latitude, longitude: complaint.longitude }}
           >
-            <Camera color={colors.forest} size={32} />
-          </LinearGradient>
-        </TouchableOpacity>
-        <Text style={styles.fabText}>Report Issue</Text>
-      </View>
+            <MapPin color={getSeverityColor(complaint.aiAnalysis?.severityScore, complaint.status)} size={32} fill={colors.forest} />
+          </Marker>
+        ))}
+      </MapView>
 
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      
-      <TouchableOpacity style={styles.button} onPress={logout}>
-        <Text style={styles.buttonText}>Logout (Test Login Flow)</Text>
+      {/* FAB */}
+      <TouchableOpacity style={styles.fabContainer} onPress={() => router.push('/camera')}>
+        <LinearGradient
+          colors={[colors.lime, colors.limeMuted]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.fab}
+        >
+          <Camera color={colors.forest} size={28} />
+        </LinearGradient>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.button, styles.outlineButton]} onPress={handleResetOnboarding}>
-        <Text style={[styles.buttonText, { color: colors.lime }]}>Reset App (Test Onboarding)</Text>
-      </TouchableOpacity>
+      {/* Bottom Sheet */}
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={0}
+        snapPoints={snapPoints}
+        backgroundStyle={{ backgroundColor: colors.surfaceElevated }}
+        handleIndicatorStyle={{ backgroundColor: colors.teal }}
+      >
+        <View style={styles.sheetHeader}>
+          <Text style={styles.sheetTitle}>Nearby Issues</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{complaints.length}</Text>
+          </View>
+        </View>
+
+        {loading ? (
+          <ActivityIndicator color={colors.lime} style={{ marginTop: 40 }} />
+        ) : (
+          <BottomSheetScrollView contentContainerStyle={styles.listContent}>
+            {complaints.map((complaint) => (
+              <View key={complaint.id} style={styles.listItem}>
+                <View style={[styles.statusDot, { backgroundColor: getSeverityColor(complaint.aiAnalysis?.severityScore, complaint.status) }]} />
+                <View style={styles.listTextContainer}>
+                  <Text style={styles.listTitle}>
+                    {complaint.aiAnalysis?.wasteTypes?.[0] || 'Unclassified Waste'}
+                  </Text>
+                  <Text style={styles.listSubtitle}>
+                    {new Date(complaint.createdAt).toLocaleDateString()} • {complaint.status}
+                  </Text>
+                </View>
+                <Navigation color={colors.teal} size={20} />
+              </View>
+            ))}
+          </BottomSheetScrollView>
+        )}
+      </BottomSheet>
     </View>
   );
 }
@@ -48,68 +135,84 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: colors.forest,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.white,
-    fontFamily: 'Philosopher-Bold',
-    marginTop: 60,
-  },
-  content: {
+  map: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   fabContainer: {
-    borderRadius: 40,
+    position: 'absolute',
+    right: 20,
+    bottom: 140, // Above bottom sheet's resting point
+    borderRadius: 30,
     overflow: 'hidden',
     shadowColor: colors.lime,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
     elevation: 8,
-    marginBottom: 16,
+    zIndex: 10,
   },
   fab: {
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  fabText: {
-    color: colors.lime,
-    fontSize: 16,
-    fontWeight: 'bold',
-    fontFamily: 'Philosopher-Bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-    backgroundColor: colors.teal,
-  },
-  button: {
-    backgroundColor: colors.severityCritical,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderRadius: 12,
-    marginVertical: 10,
-    width: '80%',
+  sheetHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
-  outlineButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1.5,
-    borderColor: colors.lime,
-    marginBottom: 40,
+  sheetTitle: {
+    color: colors.white,
+    fontFamily: 'Philosopher-Bold',
+    fontSize: 20,
+    marginRight: 10,
   },
-  buttonText: {
+  badge: {
+    backgroundColor: colors.teal,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+  },
+  badgeText: {
+    color: colors.forest,
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  listContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+  },
+  statusDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 16,
+  },
+  listTextContainer: {
+    flex: 1,
+  },
+  listTitle: {
     color: colors.white,
     fontSize: 16,
     fontWeight: 'bold',
-  }
+    marginBottom: 4,
+  },
+  listSubtitle: {
+    color: 'rgba(255,255,255,0.6)',
+    fontSize: 13,
+  },
 });

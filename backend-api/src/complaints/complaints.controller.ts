@@ -28,4 +28,9 @@ export class ComplaintsController {
   findByUser(@Request() req: any) {
     return this.complaintsService.findByUser(req.user.id);
   }
+
+  @Get('nearby')
+  findNearby() {
+    return this.complaintsService.findNearby(); // Temporary MVP: returns all active complaints
+  }
 }
