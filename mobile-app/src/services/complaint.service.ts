@@ -43,4 +43,9 @@ export class ComplaintService {
     const response = await api.get('/citizen/complaints/nearby');
     return response.data;
   }
+
+  static async getComplaintById(id: string) {
+    const response = await api.get(`/citizen/complaints/${id}`);
+    return response.data;
+  }
 }

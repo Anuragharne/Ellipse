@@ -74,6 +74,7 @@ export default function TabOneScreen() {
           <Marker
             key={complaint.id}
             coordinate={{ latitude: complaint.latitude, longitude: complaint.longitude }}
+            onPress={() => router.push(`/complaint/${complaint.id}`)}
           >
             <MapPin color={getSeverityColor(complaint.aiAnalysis?.severityScore, complaint.status)} size={32} fill={colors.forest} />
           </Marker>
@@ -112,7 +113,11 @@ export default function TabOneScreen() {
         ) : (
           <BottomSheetScrollView contentContainerStyle={styles.listContent}>
             {complaints.map((complaint) => (
-              <View key={complaint.id} style={styles.listItem}>
+              <TouchableOpacity
+                key={complaint.id}
+                style={styles.listItem}
+                onPress={() => router.push(`/complaint/${complaint.id}`)}
+              >
                 <View style={[styles.statusDot, { backgroundColor: getSeverityColor(complaint.aiAnalysis?.severityScore, complaint.status) }]} />
                 <View style={styles.listTextContainer}>
                   <Text style={styles.listTitle}>
@@ -123,7 +128,7 @@ export default function TabOneScreen() {
                   </Text>
                 </View>
                 <Navigation color={colors.teal} size={20} />
-              </View>
+              </TouchableOpacity>
             ))}
           </BottomSheetScrollView>
         )}

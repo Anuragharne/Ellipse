@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseGuards, UseInterceptors, UploadedFile, Request } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, UseInterceptors, UploadedFile, Request, Param } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ComplaintsService } from './complaints.service';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
@@ -32,5 +32,10 @@ export class ComplaintsController {
   @Get('nearby')
   findNearby() {
     return this.complaintsService.findNearby(); // Temporary MVP: returns all active complaints
+  }
+
+  @Get(':id')
+  findById(@Request() req: any, @Param('id') id: string) {
+    return this.complaintsService.findById(id, req.user.id);
   }
 }

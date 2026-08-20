@@ -79,4 +79,19 @@ export class ComplaintsService {
       },
     });
   }
+
+  async findById(id: string, userId: string) {
+    const complaint = await this.prisma.complaint.findUnique({
+      where: { id },
+      include: {
+        aiAnalysis: true,
+      },
+    });
+
+    if (!complaint) {
+      throw new Error('Complaint not found');
+    }
+
+    return complaint;
+  }
 }
