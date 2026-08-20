@@ -4,6 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { AuthService } from '../../src/services/auth.service';
 import { useAuthStore } from '../../src/stores/auth.store';
 import { ArrowLeft } from 'lucide-react-native';
+import { colors } from '../../src/theme/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function OtpScreen() {
   const { phone } = useLocalSearchParams<{ phone: string }>();
@@ -93,13 +95,15 @@ export default function OtpScreen() {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
+  const isBtnDisabled = !fullName || loading;
+
   return (
     <KeyboardAvoidingView 
       style={styles.container} 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()} disabled={loading}>
-        <ArrowLeft color="#111827" size={24} />
+        <ArrowLeft color={colors.white} size={24} />
       </TouchableOpacity>
 
       <View style={styles.header}>
@@ -119,6 +123,7 @@ export default function OtpScreen() {
               ref={inputRef}
               style={styles.otpInput}
               placeholder="••••••"
+              placeholderTextColor={colors.gray200}
               keyboardType="number-pad"
               value={otp}
               onChangeText={(text) => {
@@ -150,6 +155,7 @@ export default function OtpScreen() {
             <TextInput
               style={styles.input}
               placeholder="Full Name"
+              placeholderTextColor={colors.gray200}
               value={fullName}
               onChangeText={setFullName}
               editable={!loading}
@@ -157,17 +163,24 @@ export default function OtpScreen() {
           </View>
           
           <TouchableOpacity 
-            style={[styles.button, (!fullName || loading) && styles.buttonDisabled]} 
+            style={styles.buttonContainer} 
             onPress={handleRegister}
-            disabled={!fullName || loading}
+            disabled={isBtnDisabled}
           >
-            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Complete Registration</Text>}
+            <LinearGradient
+              colors={isBtnDisabled ? [colors.surfaceElevated, colors.surfaceElevated] : [colors.lime, colors.limeMuted]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.button}
+            >
+              {loading ? <ActivityIndicator color={colors.forest} /> : <Text style={[styles.buttonText, isBtnDisabled && styles.buttonTextDisabled]}>COMPLETE REGISTRATION</Text>}
+            </LinearGradient>
           </TouchableOpacity>
         </>
       )}
       
       {loading && !needsRegistration && otp.length === 6 && (
-        <ActivityIndicator style={{ marginTop: 24 }} color="#3b82f6" size="large" />
+        <ActivityIndicator style={{ marginTop: 24 }} color={colors.lime} size="large" />
       )}
     </KeyboardAvoidingView>
   );
@@ -176,7 +189,7 @@ export default function OtpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.forest,
     padding: 24,
     justifyContent: 'center',
   },
@@ -185,6 +198,9 @@ const styles = StyleSheet.create({
     top: 60,
     left: 24,
     zIndex: 10,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: colors.surfaceElevated,
   },
   header: {
     marginBottom: 40,
@@ -193,36 +209,40 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#111827',
+    color: colors.white,
     marginBottom: 8,
+    fontFamily: 'Philosopher-Bold',
   },
   subtitle: {
     fontSize: 16,
-    color: '#6b7280',
+    color: colors.gray100,
     lineHeight: 24,
+    fontFamily: 'Philosopher-Regular',
   },
   inputContainer: {
     marginBottom: 24,
   },
   otpInput: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderWidth: 1.5,
+    borderColor: colors.teal,
     borderRadius: 12,
     height: 64,
-    backgroundColor: '#f9fafb',
+    backgroundColor: colors.midnight,
     fontSize: 24,
     letterSpacing: 8,
-    color: '#111827',
+    color: colors.lime,
+    fontFamily: 'SpaceMono',
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderWidth: 1.5,
+    borderColor: colors.teal,
     borderRadius: 12,
     height: 56,
-    backgroundColor: '#f9fafb',
+    backgroundColor: colors.midnight,
     paddingHorizontal: 16,
     fontSize: 16,
-    color: '#111827',
+    color: colors.white,
+
   },
   resendContainer: {
     flexDirection: 'row',
@@ -230,32 +250,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   resendText: {
-    color: '#6b7280',
+    color: colors.gray100,
     fontSize: 14,
+
   },
   timerText: {
-    color: '#9ca3af',
+    color: colors.gray200,
     fontSize: 14,
     fontWeight: '500',
+
   },
   resendLink: {
-    color: '#3b82f6',
+    color: colors.lime,
     fontSize: 14,
     fontWeight: '600',
+    fontFamily: 'Inter-Regular',
+  },
+  buttonContainer: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: colors.lime,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8,
   },
   button: {
-    backgroundColor: '#3b82f6',
     height: 56,
-    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  buttonDisabled: {
-    backgroundColor: '#93c5fd',
-  },
   buttonText: {
-    color: '#ffffff',
+    color: colors.gray800,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
+    fontFamily: 'Philosopher-Bold',
+    letterSpacing: 0.5,
   },
+  buttonTextDisabled: {
+    color: colors.gray200,
+  }
 });

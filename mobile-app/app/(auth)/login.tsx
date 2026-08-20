@@ -3,6 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator,
 import { useRouter } from 'expo-router';
 import { AuthService } from '../../src/services/auth.service';
 import { Phone } from 'lucide-react-native';
+import { colors } from '../../src/theme/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function LoginScreen() {
   const [phone, setPhone] = useState('');
@@ -30,6 +32,8 @@ export default function LoginScreen() {
     }
   };
 
+  const isBtnDisabled = !phone || phone.length < 10 || loading;
+
   return (
     <KeyboardAvoidingView 
       style={styles.container} 
@@ -42,11 +46,12 @@ export default function LoginScreen() {
 
       <View style={styles.inputContainer}>
         <View style={styles.inputWrapper}>
-          <Phone size={20} color="#6b7280" style={styles.icon} />
+          <Phone size={20} color={colors.tealLight} style={styles.icon} />
           <Text style={styles.prefix}>+91</Text>
           <TextInput
             style={styles.input}
             placeholder="Mobile Number"
+            placeholderTextColor={colors.gray200}
             keyboardType="phone-pad"
             value={phone}
             onChangeText={setPhone}
@@ -57,15 +62,22 @@ export default function LoginScreen() {
       </View>
 
       <TouchableOpacity 
-        style={[styles.button, (!phone || phone.length < 10 || loading) && styles.buttonDisabled]} 
+        style={styles.buttonContainer} 
         onPress={handleSendOtp}
-        disabled={!phone || phone.length < 10 || loading}
+        disabled={isBtnDisabled}
       >
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Send OTP</Text>
-        )}
+        <LinearGradient
+          colors={isBtnDisabled ? [colors.surfaceElevated, colors.surfaceElevated] : [colors.lime, colors.limeMuted]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.button}
+        >
+          {loading ? (
+            <ActivityIndicator color={colors.forest} />
+          ) : (
+            <Text style={[styles.buttonText, isBtnDisabled && styles.buttonTextDisabled]}>SEND OTP</Text>
+          )}
+        </LinearGradient>
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );
@@ -74,7 +86,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.forest,
     padding: 24,
     justifyContent: 'center',
   },
@@ -84,12 +96,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#111827',
+    color: colors.white,
     marginBottom: 8,
+    fontFamily: 'Philosopher-Bold',
   },
   subtitle: {
     fontSize: 16,
-    color: '#6b7280',
+    color: colors.gray100,
+    fontFamily: 'Philosopher-Regular',
   },
   inputContainer: {
     marginBottom: 24,
@@ -97,40 +111,51 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderWidth: 1.5,
+    borderColor: colors.teal,
     borderRadius: 12,
     paddingHorizontal: 16,
     height: 56,
-    backgroundColor: '#f9fafb',
+    backgroundColor: colors.midnight,
   },
   icon: {
     marginRight: 8,
   },
   prefix: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#374151',
+    fontWeight: 'bold',
+    color: colors.white,
     marginRight: 8,
+    fontFamily: 'Philosopher-Bold',
   },
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#111827',
+    color: colors.white,
+
+  },
+  buttonContainer: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: colors.lime,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8,
   },
   button: {
-    backgroundColor: '#3b82f6',
     height: 56,
-    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  buttonDisabled: {
-    backgroundColor: '#93c5fd',
-  },
   buttonText: {
-    color: '#ffffff',
+    color: colors.gray800,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
+    fontFamily: 'Philosopher-Bold',
+    letterSpacing: 0.5,
+  },
+  buttonTextDisabled: {
+    color: colors.gray200,
   },
 });

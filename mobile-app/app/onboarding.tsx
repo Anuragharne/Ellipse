@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../src/stores/auth.store';
 import { Camera, Map, ShieldCheck } from 'lucide-react-native';
+import { colors } from '../src/theme/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
@@ -11,19 +13,19 @@ const slides = [
     id: '1',
     title: 'Report Issues Instantly',
     description: 'See a pothole or broken streetlight? Snap a photo and let us know.',
-    icon: <Camera size={100} color="#3b82f6" />
+    icon: <Camera size={100} color={colors.lime} />
   },
   {
     id: '2',
     title: 'Location Tagged',
     description: 'We automatically grab the exact location of your photo for faster resolutions.',
-    icon: <Map size={100} color="#10b981" />
+    icon: <Map size={100} color={colors.lime} />
   },
   {
     id: '3',
     title: 'Secure & Verified',
     description: 'Anti-fraud mechanisms ensure your reports are authentic and reliable.',
-    icon: <ShieldCheck size={100} color="#8b5cf6" />
+    icon: <ShieldCheck size={100} color={colors.lime} />
   }
 ];
 
@@ -72,12 +74,19 @@ export default function OnboardingScreen() {
 
         <View style={styles.actions}>
           <TouchableOpacity onPress={handleComplete} style={styles.skipButton}>
-            <Text style={styles.skipText}>Skip</Text>
+            <Text style={styles.skipText}>SKIP</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleNext} style={styles.nextButton}>
-            <Text style={styles.nextText}>
-              {currentIndex === slides.length - 1 ? 'Get Started' : 'Next'}
-            </Text>
+          <TouchableOpacity onPress={handleNext} style={styles.nextButtonContainer}>
+            <LinearGradient
+              colors={[colors.lime, colors.limeMuted]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.nextButton}
+            >
+              <Text style={styles.nextText}>
+                {currentIndex === slides.length - 1 ? 'GET STARTED' : 'NEXT'}
+              </Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </View>
@@ -88,7 +97,7 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.forest,
   },
   content: {
     flex: 1,
@@ -105,13 +114,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#111827',
+    color: colors.white,
     textAlign: 'center',
     marginBottom: 16,
+    fontFamily: 'Philosopher-Bold',
   },
   description: {
     fontSize: 16,
-    color: '#6b7280',
+    color: colors.gray100,
     textAlign: 'center',
     lineHeight: 24,
   },
@@ -131,11 +141,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   dotActive: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: colors.lime,
     width: 24,
   },
   dotInactive: {
-    backgroundColor: '#e5e7eb',
+    backgroundColor: colors.surfaceElevated,
   },
   actions: {
     flexDirection: 'row',
@@ -147,18 +157,27 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: colors.gray200,
     fontWeight: '600',
+    fontFamily: 'Philosopher-Bold',
+  },
+  nextButtonContainer: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: colors.lime,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8,
   },
   nextButton: {
-    backgroundColor: '#3b82f6',
     paddingHorizontal: 32,
     paddingVertical: 16,
-    borderRadius: 12,
   },
   nextText: {
     fontSize: 16,
-    color: '#ffffff',
-    fontWeight: '600',
+    color: colors.gray800,
+    fontWeight: 'bold',
+    fontFamily: 'Philosopher-Bold',
   },
 });
