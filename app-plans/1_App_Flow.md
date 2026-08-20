@@ -91,7 +91,7 @@ flowchart TD
   * Rate limit hit (3 OTP requests in 10 minutes) → "Too many attempts. Try again in 10 minutes."
 
 #### 4. Home Screen (Map View + Nearby Complaints)
-* **Layout:** Full-screen map (Mapbox GL) with a floating action button (FAB) at bottom-center for "Report Waste". Bottom sheet shows a scrollable list of nearby complaints.
+* **Layout:** Full-screen map (MapLibre GL) with a floating action button (FAB) at bottom-center for "Report Waste". Bottom sheet shows a scrollable list of nearby complaints.
 * **Map Features:**
   * User's current location shown as a pulsing lime dot (`#E3EF26`).
   * Nearby complaints shown as color-coded pins:
@@ -256,7 +256,7 @@ flowchart TD
 * **RBAC:** After login, the JWT contains the user's role (`OFFICER`, `DISPATCHER`, `ADMIN`). The sidebar navigation adjusts based on role.
 
 #### 2. Dashboard Home (GIS Command Center)
-* **Layout:** Full-width Mapbox GL map occupying 70% of the viewport. Right sidebar (30%) with live stats and triage queue.
+* **Layout:** Full-width MapLibre GL map occupying 70% of the viewport. Right sidebar (30%) with live stats and triage queue.
 * **Map Features:**
   * Color-coded complaint clusters (same Red/Orange/Yellow/Green as mobile).
   * Clicking a cluster zooms in. Clicking a single pin opens a popup with complaint summary.

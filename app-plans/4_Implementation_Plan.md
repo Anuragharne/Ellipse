@@ -6,7 +6,7 @@
 
 **Architecture:** Polyglot Microservices. Node.js/NestJS (main API + Prisma ORM) + Python/FastAPI (AI worker + Celery). Supabase for database + photo storage. Upstash Redis for async job queue. Socket.IO for real-time dashboard updates.
 
-**Tech Stack:** React Native (Expo Router) · Next.js (App Router + shadcn/ui + Tailwind) · NestJS (Prisma) · FastAPI (SQLAlchemy + Celery) · Supabase · Upstash Redis · YOLO11-seg · DINOv2 · Mapbox GL
+**Tech Stack:** React Native (Expo Router) · Next.js (App Router + shadcn/ui + Tailwind) · NestJS (Prisma) · FastAPI (SQLAlchemy + Celery) · Supabase · Upstash Redis · YOLO11-seg · DINOv2 · MapLibre GL
 
 **Spec:** References the following specification documents:
 - [1_Recommended_System_Architecture.md](file:///C:/Users/aarya/Desktop/Ellipse/plans/1_Recommended_System_Architecture.md)
@@ -92,7 +92,8 @@ Thumbs.db
 - [ ] **Step 3: Create `.env.example`**
 ```env
 # Supabase PostgreSQL (from Project Settings → Database)
-DATABASE_URL=postgresql://postgres.[project-ref]:[password]@aws-0-ap-south-1.pooler.supabase.com:6543/postgres
+DATABASE_URL="postgresql://postgres.[project-ref]:[password]@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.[project-ref]:[password]@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
 
 # Upstash Redis
 REDIS_URL=rediss://default:[password]@[endpoint].upstash.io:6379
@@ -107,8 +108,8 @@ AI_SERVICE_SECRET=change-me-to-a-shared-secret
 SUPABASE_URL=https://[project-ref].supabase.co
 SUPABASE_SERVICE_KEY=your-service-role-key
 
-# Mapbox (for GIS maps)
-NEXT_PUBLIC_MAPBOX_TOKEN=your-mapbox-token
+# MapTiler (for GIS maps)
+NEXT_PUBLIC_MAPTILER_KEY=your-maptiler-key
 ```
 
 - [ ] **Step 4: Create `README.md` with project overview**
@@ -194,6 +195,7 @@ generator client {
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
   extensions = [postgis, vector]
 }
 
@@ -562,8 +564,8 @@ npx -y create-next-app@latest web-dashboard --typescript --tailwind --eslint --a
 - [ ] **Step 2: Install dependencies**
 ```bash
 cd web-dashboard
-npm install @tanstack/react-query zustand axios socket.io-client react-map-gl mapbox-gl lucide-react
-npm install -D tailwindcss-animate @types/mapbox-gl
+npm install @tanstack/react-query zustand axios socket.io-client react-map-gl maplibre-gl lucide-react
+npm install -D tailwindcss-animate
 ```
 
 - [ ] **Step 3: Install shadcn/ui**
@@ -578,7 +580,7 @@ Add the Ellipse color tokens (lime, teal, forest, severity) and font families (P
 - [ ] **Step 5: Create `.env.example`**
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1
-NEXT_PUBLIC_MAPBOX_TOKEN=your-mapbox-token
+NEXT_PUBLIC_MAPTILER_KEY=your-maptiler-key
 NEXT_PUBLIC_WS_URL=ws://localhost:3000
 ```
 
@@ -1014,9 +1016,9 @@ git commit -m "feat: fixed-weight severity scoring with explain endpoint"
 - Create: `web-dashboard/src/hooks/useSocket.ts`
 - Modify: `web-dashboard/src/app/page.tsx`
 
-**Produces:** Full-screen Mapbox GL map with color-coded complaint pins, live WebSocket updates.
+**Produces:** Full-screen MapLibre GL map with color-coded complaint pins, live WebSocket updates.
 
-- [ ] **Step 1: Integrate React Map GL with custom dark Mapbox style**
+- [ ] **Step 1: Integrate React Map GL with custom dark MapTiler style**
 - [ ] **Step 2: Fetch complaints as GeoJSON from `GET /authority/complaints/heatmap`**
 - [ ] **Step 3: Render color-coded pins (Red/Orange/Yellow/Green by severity)**
 - [ ] **Step 4: Implement Socket.IO client to receive `complaint_triaged` events**
@@ -1066,7 +1068,7 @@ git commit -m "feat: fixed-weight severity scoring with explain endpoint"
 
 **Produces:** Full-screen map with nearby complaint pins, bottom sheet with complaint list, FAB for camera.
 
-- [ ] **Step 1: Integrate `react-native-maps` with dark Mapbox style**
+- [ ] **Step 1: Integrate `react-native-maps` with dark MapTiler style**
 - [ ] **Step 2: Fetch nearby complaints and render color-coded pins**
 - [ ] **Step 3: Build bottom sheet with complaint list (thumbnail, status, distance)**
 - [ ] **Step 4: Add FAB button (lime, camera icon) → Camera screen**

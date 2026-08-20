@@ -291,9 +291,9 @@ transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 
 ---
 
-## 7. Map Styling (Mapbox Dark Theme)
+## 7. Map Styling (MapLibre Dark Theme)
 
-Both mobile and web use a custom Mapbox style to match the dark theme:
+Both mobile and web use a custom MapLibre style to match the dark theme:
 
 ### Custom Map Style Overrides
 ```json

@@ -32,7 +32,7 @@ This roadmap breaks execution into **8 sprints** (2 weeks each). No Docker requi
 * **Validation Gate:** Test dedup on 100+ manually labeled image pairs. Verify false-merge rate < 2%.
 
 ## Sprint 4: Web Dashboard & GIS Real-time Mapping
-* **Web App:** Integrate Mapbox GL into Next.js. Render color-coded cluster pins by severity (Red > 0.75, Orange 0.5–0.75, Yellow 0.25–0.5, Green = Resolved).
+* **Web App:** Integrate MapLibre GL into Next.js. Render color-coded cluster pins by severity (Red > 0.75, Orange 0.5–0.75, Yellow 0.25–0.5, Green = Resolved).
 * **Backend:** Setup Socket.IO for real-time pushing of new AI-triaged complaints.
 * **Dashboard Features:** Triage list, dispatch UI, side-by-side dedup review panel (for the 0.70–0.90 band), and "Explain Score" modal.
 * **Layer Toggles:** Ward boundaries, historical hotspot heatmap, live complaint clusters.

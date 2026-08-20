@@ -10,7 +10,7 @@
 ## 2. Web Dashboard (Authority Command Center)
 * **Framework:** **Next.js (React)**. Optimal for SSR if needed, and extremely robust for building a large-scale operational portal.
 * **UI Component Library:** **shadcn/ui** with **Tailwind CSS**. Provides a premium, highly-customizable aesthetic without the bloat of traditional component libraries.
-* **GIS Mapping Library:** **React Map GL** wrapping **Mapbox GL JS**. Essential for rendering thousands of color-coded heatmaps and cluster pins smoothly using WebGL.
+* **GIS Mapping Library:** **React Map GL** wrapping **MapLibre GL JS**. Essential for rendering thousands of color-coded heatmaps and cluster pins smoothly using WebGL.
 * **State Management:** **Zustand** (for map state) and **React Query / TanStack Query** (for API polling/caching).
 
 ## 3. Backend & Real-time Layer
