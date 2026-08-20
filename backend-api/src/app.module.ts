@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { StorageModule } from './storage/storage.module';
 import { ComplaintsModule } from './complaints/complaints.module';
 import { BullModule } from '@nestjs/bullmq';
+import { InternalModule } from './internal/internal.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { BullModule } from '@nestjs/bullmq';
     AuthModule, 
     StorageModule, 
     ComplaintsModule,
+    InternalModule,
     BullModule.forRoot({
       connection: {
         url: process.env.REDIS_URL || 'redis://localhost:6379',
