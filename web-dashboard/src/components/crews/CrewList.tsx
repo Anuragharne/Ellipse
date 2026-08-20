@@ -2,7 +2,7 @@
 
 import { useCrewsStore, FieldCrew } from "@/stores/useCrewsStore";
 import { formatDistanceToNow } from "date-fns";
-import { MapPin, Navigation, Truck, Users } from "lucide-react";
+import { MapPin, Truck, Users } from "lucide-react";
 import { useComplaintsStore } from "@/stores/useComplaintsStore";
 
 const STATUS_CONFIG = {
@@ -59,7 +59,7 @@ function CrewCard({ crew, isSelected, onSelect }: { crew: FieldCrew, isSelected:
           <div className="absolute inset-0 rounded-full animate-ping opacity-50" style={{ background: config.color }}></div>
           <div className="w-2 h-2 rounded-full relative z-10" style={{ background: config.color }}></div>
         </div>
-        <span className="text-xs text-muted-foreground font-inter">
+        <span className="text-xs text-muted-foreground font-inter" suppressHydrationWarning>
           Location updated {formatDistanceToNow(new Date(crew.lastPing), { addSuffix: true })}
         </span>
       </div>

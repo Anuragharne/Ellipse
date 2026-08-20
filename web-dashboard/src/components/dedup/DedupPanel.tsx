@@ -3,10 +3,10 @@
 
 import { useComplaintsStore } from "@/stores/useComplaintsStore";
 import { formatDistanceToNow } from "date-fns";
-import { CheckCircle2, XCircle, Clock, MapPin, Merge } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, Merge } from "lucide-react";
 
 export function DedupPanel() {
-  const { complaints, selectedDedupReviewId, resolveDedup, selectDedupReview } = useComplaintsStore();
+  const { complaints, selectedDedupReviewId, resolveDedup } = useComplaintsStore();
 
   if (!selectedDedupReviewId) {
     return (

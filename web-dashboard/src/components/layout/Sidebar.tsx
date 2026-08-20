@@ -10,7 +10,6 @@ import {
   Users,
   Settings,
   BarChart3,
-  LogOut,
 } from "lucide-react";
 import { useAuthStore, UserRole } from "@/stores/useAuthStore";
 
@@ -31,30 +30,12 @@ const NAV_ITEMS: NavItem[] = [
   { name: "Settings", href: "/settings", icon: Settings, roles: ["ADMIN"] },
 ];
 
-const ROLE_BADGE: Record<UserRole, { label: string; color: string }> = {
-  DISPATCHER: { label: "Dispatcher", color: "#FF9F43" },
-  OFFICER: { label: "Officer", color: "#54A0FF" },
-  ADMIN: { label: "Admin", color: "#E3EF26" },
-};
-
 export function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const { user, clearSession } = useAuthStore();
+  const { user } = useAuthStore();
 
   const role = user?.role ?? "DISPATCHER";
   const visibleItems = NAV_ITEMS.filter((item) => item.roles.includes(role));
-
-  const handleSignOut = () => {
-    clearSession();
-    router.push("/login");
-  };
-
-  const initials = user?.name
-    ? user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
-    : "AU";
-
-  const badge = ROLE_BADGE[role];
 
   return (
     <aside

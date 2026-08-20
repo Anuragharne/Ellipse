@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Bell, Search, MapPin, Users, FileText, X } from "lucide-react";
+import { Bell, Search, Users, FileText, X } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useNotificationsStore } from "@/stores/useNotificationsStore";
 import { NotificationsPanel } from "@/components/layout/NotificationsPanel";
@@ -141,7 +141,7 @@ export function Topbar() {
               <div className="p-6 flex flex-col items-center justify-center text-center">
                 <Search className="w-6 h-6 text-muted-foreground opacity-50 mb-2" />
                 <p className="text-sm text-foreground font-inter">No results found</p>
-                <p className="text-xs text-muted-foreground font-inter">Try searching for "Andheri", "Hazardous", or "Team Alpha"</p>
+                <p className="text-xs text-muted-foreground font-inter">Try searching for &quot;Andheri&quot;, &quot;Hazardous&quot;, or &quot;Team Alpha&quot;</p>
               </div>
             )}
           </div>

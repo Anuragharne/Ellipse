@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useAnalyticsStore } from "@/stores/useAnalyticsStore";
-import { AlertCircle, TrendingUp, TrendingDown, Clock, MapPin, Activity, Loader2 } from "lucide-react";
+import { AlertCircle, TrendingUp, Clock, MapPin, Activity, Loader2 } from "lucide-react";
 
 export default function AnalyticsPage() {
   const { stats, complaintsTrend, wasteDistribution, wardPerformance, severityBreakdown, isLoading, fetchAnalytics } = useAnalyticsStore();
@@ -12,7 +12,6 @@ export default function AnalyticsPage() {
   }, [fetchAnalytics]);
 
   const maxTrend = Math.max(...complaintsTrend.map(d => d.value));
-  const maxWard = Math.max(...wardPerformance.map(w => w.total));
 
   if (isLoading) {
     return (

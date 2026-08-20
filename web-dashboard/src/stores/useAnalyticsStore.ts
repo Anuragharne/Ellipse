@@ -82,7 +82,7 @@ export const useAnalyticsStore = create<AnalyticsState>((set) => ({
       await delay(800); // Simulate network
       // In a real app: const data = await api.get('/analytics');
       set({ ...MOCK_STATE, isLoading: false });
-    } catch (err) {
+    } catch {
       set({ error: "Failed to fetch analytics", isLoading: false });
     }
   }

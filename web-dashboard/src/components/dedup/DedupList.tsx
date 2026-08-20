@@ -12,7 +12,6 @@ interface DedupCardProps {
 
 function DedupCard({ complaint, isSelected, onSelect }: DedupCardProps) {
   const { dedup_similarity, dedup_disputed, createdAt, id } = complaint;
-  const isFlag = dedup_similarity && dedup_similarity >= 0.7 && dedup_similarity <= 0.9;
   
   // Style based on dispute vs AI flag
   const accentColor = dedup_disputed ? "#FF4D4D" : "#FF9F43";
@@ -66,11 +65,11 @@ function DedupCard({ complaint, isSelected, onSelect }: DedupCardProps) {
         </p>
       </div>
 
-      <div className="flex items-center justify-between pt-3 border-t border-border">
-        <div className="flex items-center gap-1 text-xs text-muted-foreground font-inter">
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/50">
+        <span className="flex items-center gap-1.5 text-xs text-muted-foreground font-inter" suppressHydrationWarning>
           <Clock className="w-3 h-3" />
           {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
-        </div>
+        </span>
       </div>
     </div>
   );

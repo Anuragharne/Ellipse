@@ -77,7 +77,7 @@ const MOCK_NOTIFICATIONS: Notification[] = [
   },
 ];
 
-export const useNotificationsStore = create<NotificationsState>((set, get) => ({
+export const useNotificationsStore = create<NotificationsState>((set) => ({
   notifications: MOCK_NOTIFICATIONS,
   isLoading: false,
   error: null,
@@ -88,7 +88,7 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
       await delay(500); // Simulate network
       // In a real app: const data = await api.get('/notifications');
       set({ notifications: MOCK_NOTIFICATIONS, isLoading: false });
-    } catch (err) {
+    } catch {
       set({ error: "Failed to fetch notifications", isLoading: false });
     }
   },

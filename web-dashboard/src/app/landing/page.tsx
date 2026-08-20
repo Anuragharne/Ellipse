@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, ArrowRight, Zap, FileText, Activity, AlertTriangle, HelpCircle } from "lucide-react";
+import { ShieldCheck, ArrowRight, Zap, FileText, Activity, HelpCircle } from "lucide-react";
 import { useAuthStore, apiLogin } from "@/stores/useAuthStore";
 import gsap from "gsap";
 

@@ -76,7 +76,7 @@ export const useCrewsStore = create<CrewsState>((set) => ({
     try {
       await delay(500); // Simulate API call
       set({ crews: MOCK_CREWS, isLoading: false });
-    } catch (err) {
+    } catch {
       set({ error: "Failed to fetch crews", isLoading: false });
     }
   },

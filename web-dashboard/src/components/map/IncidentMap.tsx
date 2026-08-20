@@ -32,7 +32,7 @@ export function IncidentMap({ showCrews = false }: { showCrews?: boolean } = {})
     const baseUrl = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png";
 
     return {
-      version: 8,
+      version: 8 as const,
       sources: {
         carto_base: {
           type: "raster",
@@ -139,7 +139,7 @@ export function IncidentMap({ showCrews = false }: { showCrews?: boolean } = {})
           latitude: mapViewport.latitude,
           zoom: mapViewport.zoom,
         }}
-        mapStyle={mapStyle as any}
+        mapStyle={mapStyle}
         style={{ width: "100%", height: "100%" }}
       >
         <NavigationControl position="top-right" />

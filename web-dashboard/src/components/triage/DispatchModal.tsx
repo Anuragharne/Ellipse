@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X, Truck, Shield, User } from "lucide-react";
-import { useComplaintsStore, Complaint, LogisticsTier } from "@/stores/useComplaintsStore";
+import { useComplaintsStore, LogisticsTier } from "@/stores/useComplaintsStore";
 
 const VEHICLE_OPTIONS: { value: string; label: string; tier: LogisticsTier[] }[] = [
   { value: "MANUAL_SWEEP", label: "Manual Sweep Team", tier: [1] },

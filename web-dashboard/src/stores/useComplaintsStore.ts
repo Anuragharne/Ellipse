@@ -186,7 +186,7 @@ const MOCK_COMPLAINTS: Complaint[] = [
   },
 ];
 
-export const useComplaintsStore = create<ComplaintsState>((set, get) => ({
+export const useComplaintsStore = create<ComplaintsState>((set) => ({
   complaints: MOCK_COMPLAINTS,
   isLoading: false,
   error: null,
@@ -202,7 +202,7 @@ export const useComplaintsStore = create<ComplaintsState>((set, get) => ({
     try {
       await delay(600); // Simulate API call
       set({ complaints: MOCK_COMPLAINTS, isLoading: false });
-    } catch (err) {
+    } catch {
       set({ error: "Failed to fetch complaints", isLoading: false });
     }
   },

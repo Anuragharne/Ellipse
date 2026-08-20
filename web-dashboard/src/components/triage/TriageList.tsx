@@ -116,7 +116,7 @@ function TriageCard({ complaint, isSelected, onSelect, onDispatch }: TriageCardP
       {/* Bottom row */}
       <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
         <div className="flex items-center gap-3 text-xs text-muted-foreground font-inter">
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1" suppressHydrationWarning>
             <Clock className="w-3 h-3" />
             {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
           </span>
