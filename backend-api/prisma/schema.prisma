@@ -1,0 +1,154 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [postgis, vector]
+}
+
+enum UserRole {
+  CITIZEN
+  OFFICER
+  DISPATCHER
+  ADMIN
+  FIELD_CREW
+}
+
+enum ComplaintStatus {
+  LOGGED
+  AI_TRIAGED
+  ASSIGNED
+  DISPATCHED
+  RESOLVED
+  DUPLICATE
+  REJECTED
+}
+
+enum VehicleClass {
+  MANUAL_SWEEP
+  HANDCART
+  MINI_TRUCK
+  COMPACTOR
+}
+
+enum VolumeConfidence {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum VolumeMethod {
+  CITIZEN_PICK
+  ARCORE_LIDAR
+  MONOCULAR_CALIBRATED
+}
+
+model User {
+  id              String            @id @default(uuid())
+  role            UserRole          @default(CITIZEN)
+  fullName        String            @map("full_name")
+  email           String?           @unique
+  phone           String?           @unique
+  cleanCityCredits Int              @default(0) @map("clean_city_credits")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  complaints      Complaint[]       @relation("CitizenComplaints")
+  dispatchOrders  DispatchOrder[]   @relation("CrewDispatches")
+  dedupReviews    Complaint[]       @relation("DedupReviewer")
+  activityLogs    CitizenActivityLog[]
+
+  @@map("users")
+}
+
+model Complaint {
+  id                  String          @id @default(uuid())
+  citizenId           String?         @map("citizen_id")
+  citizen             User?           @relation("CitizenComplaints", fields: [citizenId], references: [id], onDelete: SetNull)
+  rawImageUrl         String          @map("raw_image_url")
+  latitude            Float
+  longitude           Float
+  compassHeading      Float?          @map("compass_heading")
+  status              ComplaintStatus  @default(LOGGED)
+  parentComplaintId   String?         @map("parent_complaint_id")
+  parentComplaint     Complaint?      @relation("DedupParent", fields: [parentComplaintId], references: [id])
+  childComplaints     Complaint[]     @relation("DedupParent")
+  dedupSimilarity     Float?          @map("dedup_similarity")
+  dedupReviewedById   String?         @map("dedup_reviewed_by")
+  dedupReviewedBy     User?           @relation("DedupReviewer", fields: [dedupReviewedById], references: [id])
+  dedupDisputed       Boolean         @default(false) @map("dedup_disputed")
+  upvoteCount         Int             @default(0) @map("upvote_count")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+  aiAnalysis          AiAnalysis?
+  dispatchOrder       DispatchOrder?
+  activityLogs        CitizenActivityLog[]
+
+  @@map("complaints")
+}
+
+model SeverityWeightVersion {
+  id              Int         @id @default(autoincrement())
+  computedAt      DateTime    @default(now()) @map("computed_at")
+  weights         Json        // e.g., {"volume": 0.35, "hazard": 0.30, "proximity": 0.20, "age": 0.15}
+  method          String      @default("FIXED_EXPERT")
+  complaintCount  Int?        @map("complaint_count")
+  activeUntil     DateTime?   @map("active_until")
+  aiAnalyses      AiAnalysis[]
+
+  @@map("severity_weight_versions")
+}
+
+model AiAnalysis {
+  id                      String                @id @default(uuid())
+  complaintId             String                @unique @map("complaint_id")
+  complaint               Complaint             @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  wasteClasses            Json                  @map("waste_classes") // ["Plastic", "Organic"]
+  volumeM3                Float?                @map("volume_m3")
+  volumeConfidence        VolumeConfidence?     @default(LOW) @map("volume_confidence")
+  volumeMethod            VolumeMethod?         @map("volume_method")
+  severityScore           Float?                @map("severity_score")
+  severityWeightVersionId Int?                  @map("severity_weight_version_id")
+  severityWeightVersion   SeverityWeightVersion? @relation(fields: [severityWeightVersionId], references: [id])
+  hazardFlags             Json?                 @map("hazard_flags")
+  logisticsTier           Int?                  @map("logistics_tier")
+  // image_embedding stored via raw SQL (Prisma doesn't natively support vector type)
+  analyzedAt              DateTime              @default(now()) @map("analyzed_at")
+
+  @@map("ai_analysis")
+}
+
+model DispatchOrder {
+  id              String        @id @default(uuid())
+  complaintId     String        @unique @map("complaint_id")
+  complaint       Complaint     @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  crewId          String?       @map("crew_id")
+  crew            User?         @relation("CrewDispatches", fields: [crewId], references: [id], onDelete: SetNull)
+  vehicle         VehicleClass
+  ppeRequired     Json?         @map("ppe_required")
+  beforePhotoUrl  String?       @map("before_photo_url")
+  afterPhotoUrl   String?       @map("after_photo_url")
+  citizenRating   Int?          @map("citizen_rating")
+  resolvedAt      DateTime?     @map("resolved_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  @@map("dispatch_orders")
+}
+
+model CitizenActivityLog {
+  id               String     @id @default(uuid())
+  citizenId        String     @map("citizen_id")
+  citizen          User       @relation(fields: [citizenId], references: [id], onDelete: Cascade)
+  action           String     // 'SUBMIT', 'UPVOTE', 'VERIFY', 'DISPUTE_DEDUP'
+  complaintId      String?    @map("complaint_id")
+  complaint        Complaint? @relation(fields: [complaintId], references: [id])
+  ipAddress        String?    @map("ip_address")
+  deviceFingerprint String?   @map("device_fingerprint")
+  flagged          Boolean    @default(false)
+  flagReason       String?    @map("flag_reason")
+  createdAt        DateTime   @default(now()) @map("created_at")
+
+  @@map("citizen_activity_log")
+}
