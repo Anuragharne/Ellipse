@@ -30,7 +30,8 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('CITIZEN', 'OFFICER', 'ADMIN', 'DISPATCHER', 'FIELD_CREW')
   @Get('me')
-  getProfile(@Request() req: any) {
-    return req.user;
+  async getProfile(@Request() req: any) {
+    const user = await this.authService.getProfile(req.user.id);
+    return user;
   }
 }
