@@ -187,7 +187,7 @@ const MOCK_COMPLAINTS: Complaint[] = [
 ];
 
 export const useComplaintsStore = create<ComplaintsState>((set) => ({
-  complaints: MOCK_COMPLAINTS,
+  complaints: [],
   isLoading: false,
   error: null,
   selectedComplaintId: null,
@@ -200,8 +200,12 @@ export const useComplaintsStore = create<ComplaintsState>((set) => ({
   fetchComplaints: async () => {
     set({ isLoading: true, error: null });
     try {
-      await delay(600); // Simulate API call
-      set({ complaints: MOCK_COMPLAINTS, isLoading: false });
+      const res = await fetch("http://localhost:3000/api/v1/internal/complaints", {
+        headers: { "x-internal-secret": "ellipse-ai-webhook-secret-67890" }
+      });
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      set({ complaints: data, isLoading: false });
     } catch {
       set({ error: "Failed to fetch complaints", isLoading: false });
     }

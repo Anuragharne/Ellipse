@@ -1,4 +1,4 @@
-import { Controller, Patch, Param, Body, UseGuards, NotFoundException } from '@nestjs/common';
+import { Controller, Patch, Param, Body, UseGuards, NotFoundException, Get } from '@nestjs/common';
 import { InternalGuard } from './internal.guard';
 import { AiResultsDto } from './dto/ai-results.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -11,6 +11,16 @@ export class InternalController {
     private readonly prisma: PrismaService,
     private readonly eventsGateway: EventsGateway,
   ) {}
+
+  @Get()
+  async getAllComplaints() {
+    return this.prisma.complaint.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        aiAnalysis: true,
+      }
+    });
+  }
 
   @Patch(':id/ai-results')
   async updateAiResults(@Param('id') id: string, @Body() dto: AiResultsDto) {

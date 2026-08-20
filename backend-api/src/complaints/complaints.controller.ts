@@ -9,12 +9,13 @@ import { RateLimitGuard } from '../common/guards/rate-limit.guard';
 import { AntiFraudInterceptor } from '../common/guards/anti-fraud.guard';
 
 @Controller('api/v1/citizen/complaints')
-@UseGuards(JwtAuthGuard, RolesGuard, RateLimitGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('CITIZEN')
 export class ComplaintsController {
   constructor(private readonly complaintsService: ComplaintsService) {}
 
   @Post()
+  @UseGuards(RateLimitGuard)
   @UseInterceptors(FileInterceptor('photo'), AntiFraudInterceptor)
   submit(
     @Request() req: any,

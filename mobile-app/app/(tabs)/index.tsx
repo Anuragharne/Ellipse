@@ -9,6 +9,7 @@ import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { ComplaintService } from '../../src/services/complaint.service';
 import { darkMapStyle } from '../../src/theme/mapStyle';
+import * as Location from 'expo-location';
 
 interface Complaint {
   id: string;
@@ -37,6 +38,31 @@ export default function TabOneScreen() {
   
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = ['15%', '50%', '90%'];
+  
+  const [initialRegion, setInitialRegion] = useState<any>(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.warn('Permission to access location was denied');
+        setInitialRegion({
+          latitude: 40.7128, // Default fallback
+          longitude: -74.0060,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      setInitialRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    })();
+  }, []);
 
   const fetchComplaints = async () => {
     try {
@@ -57,29 +83,30 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        provider={PROVIDER_DEFAULT}
-        customMapStyle={darkMapStyle}
-        initialRegion={{
-          latitude: 40.7128, // Default to NYC or current location (can be updated with expo-location)
-          longitude: -74.0060,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-        showsUserLocation={true}
-        showsMyLocationButton={false}
-      >
-        {complaints.map((complaint) => (
-          <Marker
-            key={complaint.id}
-            coordinate={{ latitude: complaint.latitude, longitude: complaint.longitude }}
-            onPress={() => router.push(`/complaint/${complaint.id}`)}
-          >
-            <MapPin color={getSeverityColor(complaint.aiAnalysis?.severityScore, complaint.status)} size={32} fill={colors.forest} />
-          </Marker>
-        ))}
-      </MapView>
+      {!initialRegion ? (
+        <View style={[styles.map, { justifyContent: 'center', alignItems: 'center' }]}>
+          <ActivityIndicator size="large" color={colors.lime} />
+        </View>
+      ) : (
+        <MapView
+          style={styles.map}
+          provider={PROVIDER_DEFAULT}
+          customMapStyle={darkMapStyle}
+          initialRegion={initialRegion}
+          showsUserLocation={true}
+          showsMyLocationButton={false}
+        >
+          {complaints.map((complaint) => (
+            <Marker
+              key={complaint.id}
+              coordinate={{ latitude: complaint.latitude, longitude: complaint.longitude }}
+              onPress={() => router.push(`/complaint/${complaint.id}`)}
+            >
+              <MapPin color={getSeverityColor(complaint.aiAnalysis?.severityScore, complaint.status)} size={32} fill={colors.forest} />
+            </Marker>
+          ))}
+        </MapView>
+      )}
 
       {/* FAB */}
       <TouchableOpacity style={styles.fabContainer} onPress={() => router.push('/camera')}>
@@ -147,8 +174,8 @@ const styles = StyleSheet.create({
   },
   fabContainer: {
     position: 'absolute',
+    top: 60,
     right: 20,
-    bottom: 140, // Above bottom sheet's resting point
     borderRadius: 30,
     overflow: 'hidden',
     shadowColor: colors.lime,

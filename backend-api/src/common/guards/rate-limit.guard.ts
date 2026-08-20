@@ -19,11 +19,11 @@ export class RateLimitGuard implements CanActivate {
     const dailyKey = `ratelimit:daily:${userId}:${dateStr}`;
     const cooldownKey = `ratelimit:cooldown:${userId}`;
 
-    // 1. Check cooldown (5 minutes = 300s)
+    // 1. Check cooldown (10 seconds for testing)
     const isInCooldown = await this.redis.get(cooldownKey);
     if (isInCooldown) {
-      await this.logViolation(userId, req, 'COOLDOWN_VIOLATION', 'Attempted to submit within 5 minutes');
-      throw new HttpException('Please wait 5 minutes before submitting another complaint', HttpStatus.TOO_MANY_REQUESTS);
+      await this.logViolation(userId, req, 'COOLDOWN_VIOLATION', 'Attempted to submit within 10 seconds');
+      throw new HttpException('Please wait 10 seconds before submitting another complaint', HttpStatus.TOO_MANY_REQUESTS);
     }
 
     // 2. Check daily limit (10 per day)
@@ -39,7 +39,7 @@ export class RateLimitGuard implements CanActivate {
     await this.redis.incr(dailyKey);
     await this.redis.expire(dailyKey, 86400); // 24 hours
     
-    await this.redis.setex(cooldownKey, 300, '1'); // 5 min cooldown
+    await this.redis.setex(cooldownKey, 10, '1'); // 10 sec cooldown
 
     return true;
   }
