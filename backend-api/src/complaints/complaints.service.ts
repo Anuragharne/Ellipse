@@ -2,8 +2,6 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { StorageService } from '../storage/storage.service';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
-import { InjectQueue } from '@nestjs/bullmq';
-import { Queue } from 'bullmq';
 import { randomUUID } from 'crypto';
 
 @Injectable()
@@ -11,7 +9,6 @@ export class ComplaintsService {
   constructor(
     private prisma: PrismaService,
     private storage: StorageService,
-    @InjectQueue('ai_processing') private aiQueue: Queue,
   ) {}
 
   async submit(userId: string, dto: CreateComplaintDto, file: Express.Multer.File) {
@@ -43,11 +40,19 @@ export class ComplaintsService {
       dto.longitude, dto.latitude, complaint.id
     );
 
-    // 3. Enqueue to BullMQ for AI processing
-    await this.aiQueue.add('process_waste_image', {
-      complaint_id: complaint.id,
-      image_url: photoUrl,
-    });
+    // 3. Call AI Service asynchronously
+    try {
+      fetch('http://localhost:8000/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          complaintId: complaint.id,
+          imageUrl: photoUrl,
+        }),
+      }).catch(err => console.error('Failed to call AI service:', err));
+    } catch (error) {
+      console.error('Error initiating AI processing:', error);
+    }
 
     return {
       message: 'Complaint submitted successfully',

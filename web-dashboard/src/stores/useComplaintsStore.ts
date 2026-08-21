@@ -201,7 +201,7 @@ export const useComplaintsStore = create<ComplaintsState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await fetch("http://localhost:3000/api/v1/internal/complaints", {
-        headers: { "x-internal-secret": "ellipse-ai-webhook-secret-67890" }
+        headers: { "x-ai-service-secret": "ellipse-ai-webhook-secret-67890" }
       });
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();

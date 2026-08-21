@@ -105,13 +105,13 @@ const styles = StyleSheet.create({
   statsCard: {
     marginHorizontal: 20,
     backgroundColor: colors.surfaceElevated,
-    borderRadius: 16,
+    borderRadius: 24,
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 30,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+    borderColor: colors.surfaceBorder,
   },
   statsIcon: {
     width: 60,
@@ -149,8 +149,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.surfaceElevated,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 20,
     marginBottom: 12,
+    borderWidth: 1,
+    borderColor: colors.surfaceBorder,
   },
   menuText: {
     color: colors.white,

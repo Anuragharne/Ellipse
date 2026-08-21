@@ -1,14 +1,23 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Topbar } from "@/components/layout/Topbar";
+import { useComplaintsStore } from "@/stores/useComplaintsStore";
 
 const NO_SHELL_ROUTES = ["/login", "/landing"];
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isShellless = NO_SHELL_ROUTES.some((r) => pathname.startsWith(r));
+  const fetchComplaints = useComplaintsStore((state) => state.fetchComplaints);
+
+  useEffect(() => {
+    if (!isShellless) {
+      fetchComplaints();
+    }
+  }, [isShellless, fetchComplaints]);
 
   if (isShellless) {
     return <>{children}</>;

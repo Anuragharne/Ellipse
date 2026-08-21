@@ -71,7 +71,7 @@ const MOCK_USERS: { email: string; user: AuthUser; token: string }[] = [
       id: "user-001",
       name: "Rajesh Patil",
       email: "dispatcher@bbmc.gov.in",
-      role: "DISPATCHER",
+      role: "ADMIN",
       ward: "Ward 42 — Andheri West",
     },
   },

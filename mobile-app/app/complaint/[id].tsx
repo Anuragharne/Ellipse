@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Image, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ComplaintService } from '../../src/services/complaint.service';
 import { colors } from '../../src/theme/colors';
@@ -20,6 +20,7 @@ export default function ComplaintDetailScreen() {
         setComplaint(data);
       } catch (error) {
         console.error('Failed to fetch complaint:', error);
+        Alert.alert('Error', 'Failed to fetch complaint details. The complaint may have been deleted or there is a network issue.');
       } finally {
         setLoading(false);
       }
@@ -203,9 +204,11 @@ const styles = StyleSheet.create({
   },
   timelineContainer: {
     backgroundColor: colors.surfaceElevated,
-    borderRadius: 12,
+    borderRadius: 24,
     padding: 20,
     marginBottom: 24,
+    borderWidth: 1,
+    borderColor: colors.surfaceBorder,
   },
   timelineRow: {
     flexDirection: 'row',
@@ -249,9 +252,11 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.surfaceElevated,
-    borderRadius: 12,
+    borderRadius: 24,
     padding: 20,
     marginBottom: 24,
+    borderWidth: 1,
+    borderColor: colors.surfaceBorder,
   },
   cardHeader: {
     flexDirection: 'row',

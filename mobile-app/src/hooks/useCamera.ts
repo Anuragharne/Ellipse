@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Camera, CameraType, PermissionStatus } from 'expo-camera';
+import { Camera, CameraType, PermissionStatus, useCameraPermissions } from 'expo-camera';
 
 export function useCamera() {
-  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [permission, requestPermission] = useCameraPermissions();
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {

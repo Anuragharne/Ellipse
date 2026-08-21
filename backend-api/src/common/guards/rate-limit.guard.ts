@@ -38,7 +38,7 @@ export class RateLimitGuard implements CanActivate {
     // Passed checks - increment daily counter and set cooldown
     await this.redis.incr(dailyKey);
     await this.redis.expire(dailyKey, 86400); // 24 hours
-    
+
     await this.redis.setex(cooldownKey, 10, '1'); // 10 sec cooldown
 
     return true;

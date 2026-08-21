@@ -27,7 +27,7 @@ export default function OtpScreen() {
   }, []);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (timer > 0) {
       interval = setInterval(() => {
         setTimer((prev) => prev - 1);

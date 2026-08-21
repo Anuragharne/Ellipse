@@ -27,7 +27,7 @@ const getSeverityColor = (score?: number, status?: string) => {
   if (status === 'RESOLVED') return colors.lime;
   if (!score) return colors.severityLow;
   if (score >= 0.75) return colors.severityCritical;
-  if (score >= 0.5) return colors.severityHigh;
+  if (score >= 0.5) return colors.severityModerate;
   return colors.severityLow;
 };
 
@@ -35,10 +35,10 @@ export default function TabOneScreen() {
   const router = useRouter();
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = ['15%', '50%', '90%'];
-  
+
   const [initialRegion, setInitialRegion] = useState<any>(null);
 
   useEffect(() => {
@@ -223,10 +223,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.surface,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 20,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+    borderColor: colors.surfaceBorder,
   },
   statusDot: {
     width: 12,

@@ -98,8 +98,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.surfaceElevated,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 20,
     marginBottom: 12,
+    borderWidth: 1,
+    borderColor: colors.surfaceBorder,
   },
   itemCardHighlight: {
     backgroundColor: 'rgba(216, 255, 115, 0.1)',
