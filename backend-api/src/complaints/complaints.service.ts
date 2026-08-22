@@ -48,6 +48,7 @@ export class ComplaintsService {
         body: JSON.stringify({
           complaintId: complaint.id,
           imageUrl: photoUrl,
+          sizeEstimate: dto.sizeEstimate,
         }),
       }).catch(err => console.error('Failed to call AI service:', err));
     } catch (error) {

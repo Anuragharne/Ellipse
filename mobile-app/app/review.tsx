@@ -32,6 +32,7 @@ export default function ReviewScreen() {
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude),
         compassHeading: parseFloat(heading || '0'),
+        sizeEstimate: size ? size.toUpperCase() : undefined,
       });
       
       // Success! Navigate to success screen

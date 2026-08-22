@@ -26,8 +26,9 @@ INTERNAL_SECRET = os.getenv("INTERNAL_SECRET", "ellipse-ai-webhook-secret-67890"
 class AnalyzeRequest(BaseModel):
     complaintId: str
     imageUrl: str
+    sizeEstimate: str | None = None
 
-async def process_image_and_webhook(complaint_id: str, image_url: str):
+async def process_image_and_webhook(complaint_id: str, image_url: str, size_estimate: str | None = None):
     if not pipeline:
         logger.error("Pipeline not initialized, cannot process.")
         return
@@ -37,7 +38,7 @@ async def process_image_and_webhook(complaint_id: str, image_url: str):
         image = await pipeline.download_image(image_url)
         
         # 2. Run AI pipeline
-        results = pipeline.run_pipeline(image)
+        results = pipeline.run_pipeline(image, size_estimate)
         logger.info(f"Analysis results for {complaint_id}: {results}")
         
         # 3. Send results to backend webhook
@@ -62,7 +63,7 @@ async def analyze_image(request: AnalyzeRequest, background_tasks: BackgroundTas
     if not pipeline:
         raise HTTPException(status_code=500, detail="Models not loaded")
         
-    background_tasks.add_task(process_image_and_webhook, request.complaintId, request.imageUrl)
+    background_tasks.add_task(process_image_and_webhook, request.complaintId, request.imageUrl, request.sizeEstimate)
     
     return {"status": "processing", "complaintId": request.complaintId}
 

@@ -5,6 +5,7 @@ export interface CreateComplaintParams {
   latitude: number;
   longitude: number;
   compassHeading?: number;
+  sizeEstimate?: string;
 }
 
 export class ComplaintService {
@@ -28,6 +29,10 @@ export class ComplaintService {
     
     if (params.compassHeading !== undefined) {
       formData.append('compassHeading', params.compassHeading.toString());
+    }
+
+    if (params.sizeEstimate) {
+      formData.append('sizeEstimate', params.sizeEstimate);
     }
 
     const response = await api.post('/citizen/complaints', formData, {

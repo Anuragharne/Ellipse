@@ -70,6 +70,7 @@ model Complaint {
   rawImageUrl         String          @map("raw_image_url")
   latitude            Float
   longitude           Float
+  location            Unsupported("geography(Point, 4326)")? @map("location")
   compassHeading      Float?          @map("compass_heading")
   status              ComplaintStatus  @default(LOGGED)
   parentComplaintId   String?         @map("parent_complaint_id")
@@ -109,6 +110,8 @@ model AiAnalysis {
   volumeM3                Float?                @map("volume_m3")
   volumeConfidence        VolumeConfidence?     @default(LOW) @map("volume_confidence")
   volumeMethod            VolumeMethod?         @map("volume_method")
+  category                String?               @map("category")
+  sizeEstimate            String?               @map("size_estimate")
   severityScore           Float?                @map("severity_score")
   severityWeightVersionId Int?                  @map("severity_weight_version_id")
   severityWeightVersion   SeverityWeightVersion? @relation(fields: [severityWeightVersionId], references: [id])

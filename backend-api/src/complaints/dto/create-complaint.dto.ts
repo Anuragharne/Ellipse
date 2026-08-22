@@ -18,4 +18,8 @@ export class CreateComplaintDto {
   @IsOptional()
   @IsString()
   address?: string;
+
+  @IsOptional()
+  @IsString()
+  sizeEstimate?: string;
 }

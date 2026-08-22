@@ -43,6 +43,8 @@ export class InternalController {
             wasteClasses: dto.wasteTypes,
             logisticsTier: dto.tier,
             severityScore: dto.severityScore || 0,
+            category: dto.category,
+            sizeEstimate: dto.sizeEstimate,
             // Assuming weight version 1 exists for now, since it's an Int relation
             severityWeightVersionId: 1, 
           },

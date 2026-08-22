@@ -15,4 +15,12 @@ export class AiResultsDto {
   @IsOptional()
   @IsString()
   weightVersionId?: string;
+
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @IsOptional()
+  @IsString()
+  sizeEstimate?: string;
 }
