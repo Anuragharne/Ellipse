@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, Patch, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto, SendOtpDto, VerifyOtpDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -33,5 +33,11 @@ export class AuthController {
   async getProfile(@Request() req: any) {
     const user = await this.authService.getProfile(req.user.id);
     return user;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('me/role')
+  async toggleRole(@Request() req: any, @Body('role') role: string) {
+    return this.authService.updateRole(req.user.id, role);
   }
 }

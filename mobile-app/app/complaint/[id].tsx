@@ -4,19 +4,26 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ComplaintService } from '../../src/services/complaint.service';
 import { colors } from '../../src/theme/colors';
 import { ArrowLeft, CheckCircle, AlertTriangle, AlertCircle, HelpCircle, Navigation } from 'lucide-react-native';
+import { useAuthStore } from '../../src/stores/auth.store';
 
 const STATUS_ORDER = ['LOGGED', 'AI_TRIAGED', 'DISPATCHED', 'RESOLVED'];
 
 export default function ComplaintDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
+  const { user } = useAuthStore();
   const [complaint, setComplaint] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchComplaint = async () => {
       try {
-        const data = await ComplaintService.getComplaintById(id as string);
+        let data;
+        if (user?.role === 'FIELD_CREW') {
+          data = await ComplaintService.getCrewComplaintById(id as string);
+        } else {
+          data = await ComplaintService.getComplaintById(id as string);
+        }
         setComplaint(data);
       } catch (error) {
         console.error('Failed to fetch complaint:', error);
@@ -142,6 +149,15 @@ export default function ComplaintDetailScreen() {
         {complaint.status === 'DUPLICATE' && (
           <TouchableOpacity style={[styles.actionButton, styles.disputeButton]}>
             <Text style={styles.actionButtonText}>Dispute Duplicate Status</Text>
+          </TouchableOpacity>
+        )}
+
+        {user?.role === 'FIELD_CREW' && complaint.status === 'DISPATCHED' && (
+          <TouchableOpacity 
+            style={[styles.actionButton, { backgroundColor: colors.teal }]}
+            onPress={() => router.push(`/crew/resolve/${complaint.id}` as any)}
+          >
+            <Text style={[styles.actionButtonText, { color: colors.white }]}>Resolve Issue</Text>
           </TouchableOpacity>
         )}
       </ScrollView>

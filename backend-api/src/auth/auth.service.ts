@@ -127,4 +127,16 @@ export class AuthService {
     if (!user) throw new BadRequestException('User not found');
     return user;
   }
+
+  async updateRole(userId: string, role: string) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { role: role as any },
+      select: {
+        id: true,
+        role: true,
+      }
+    });
+    return user;
+  }
 }

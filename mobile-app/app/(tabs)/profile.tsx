@@ -6,7 +6,7 @@ import { LogOut, User as UserIcon, Settings, Award } from 'lucide-react-native';
 import { api } from '../../src/services/api';
 
 export default function ProfileScreen() {
-  const { user: authUser, logout } = useAuthStore();
+  const { user: authUser, logout, setUser } = useAuthStore();
   const [profile, setProfile] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -14,6 +14,8 @@ export default function ProfileScreen() {
     try {
       const response = await api.get('/auth/me');
       setProfile(response.data);
+      // Update global store so the rest of the app knows the role changed
+      setUser(response.data);
     } catch (error) {
       console.error('Failed to fetch profile', error);
     }
@@ -59,6 +61,25 @@ export default function ProfileScreen() {
         <TouchableOpacity style={styles.menuItem}>
           <Settings color={colors.white} size={24} />
           <Text style={styles.menuText}>Settings</Text>
+        </TouchableOpacity>
+
+        {/* Developer Testing Toggle */}
+        <TouchableOpacity 
+          style={styles.menuItem} 
+          onPress={async () => {
+            try {
+              const newRole = displayUser?.role === 'FIELD_CREW' ? 'CITIZEN' : 'FIELD_CREW';
+              await api.patch('/auth/me/role', { role: newRole });
+              fetchProfile(); // refresh local state
+            } catch (error) {
+              console.error('Failed to switch role', error);
+            }
+          }}
+        >
+          <Settings color={colors.lime} size={24} />
+          <Text style={[styles.menuText, { color: colors.lime }]}>
+            Switch to {displayUser?.role === 'FIELD_CREW' ? 'CITIZEN' : 'FIELD_CREW'} Mode
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={logout}>

@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { Camera as CameraIcon, X, MapPin } from 'lucide-react-native';
+import { Camera as CameraIcon, X, MapPin, Image as ImageIcon } from 'lucide-react-native';
 import { colors } from '../src/theme/colors';
 import { useLocation } from '../src/hooks/useLocation';
 
@@ -64,6 +65,41 @@ export default function CameraScreen() {
     }
   };
 
+  const pickImage = async () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        if (!location) {
+          alert('GPS location is required. Please wait for GPS lock.');
+          setIsProcessing(false);
+          return;
+        }
+
+        router.push({
+          pathname: '/review',
+          params: { 
+            photoUri: result.assets[0].uri,
+            latitude: location.latitude.toString(),
+            longitude: location.longitude.toString(),
+            heading: location.heading?.toString() || '0'
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Failed to pick image', error);
+      alert('Failed to pick image. Try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <CameraView 
@@ -94,7 +130,11 @@ export default function CameraScreen() {
             </View>
             
             <View style={styles.captureContainer}>
-              <View style={styles.captureSpacer} />
+              <View style={styles.captureSpacer}>
+                <TouchableOpacity style={styles.uploadButton} onPress={pickImage} disabled={isProcessing}>
+                  <ImageIcon color={colors.white} size={24} />
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity 
                 style={[styles.captureButton, (!location || isProcessing) && styles.captureButtonDisabled]} 
                 onPress={takePicture}
@@ -222,5 +262,13 @@ const styles = StyleSheet.create({
     height: 64,
     borderRadius: 32,
     backgroundColor: colors.white,
+  },
+  uploadButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

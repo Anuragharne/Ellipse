@@ -64,4 +64,26 @@ export class InternalController {
       complaint: updatedComplaint,
     };
   }
+
+  @Patch(':id/status')
+  async updateStatus(@Param('id') id: string, @Body('status') status: any) {
+    const updatedComplaint = await this.prisma.complaint.update({
+      where: { id },
+      data: { status },
+      include: {
+        aiAnalysis: true,
+      }
+    });
+
+    // Broadcast the event via Socket.IO so mobile apps see the change instantly if connected
+    this.eventsGateway.broadcastComplaintTriaged(id, {
+      status: updatedComplaint.status,
+      aiAnalysis: updatedComplaint.aiAnalysis,
+    });
+
+    return {
+      message: 'Status updated successfully',
+      complaint: updatedComplaint,
+    };
+  }
 }

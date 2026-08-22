@@ -10,6 +10,7 @@ import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { ComplaintService } from '../../src/services/complaint.service';
 import { darkMapStyle } from '../../src/theme/mapStyle';
 import * as Location from 'expo-location';
+import { CrewDashboard } from '../../src/components/CrewDashboard';
 
 interface Complaint {
   id: string;
@@ -64,7 +65,11 @@ export default function TabOneScreen() {
     })();
   }, []);
 
+  const { user } = useAuthStore();
+
   const fetchComplaints = async () => {
+    if (user?.role !== 'CITIZEN') return; // Field crew don't need nearby complaints
+
     try {
       const data = await ComplaintService.getNearbyComplaints();
       setComplaints(data);
@@ -78,8 +83,12 @@ export default function TabOneScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchComplaints();
-    }, [])
+    }, [user?.role])
   );
+
+  if (user?.role === 'FIELD_CREW') {
+    return <CrewDashboard />;
+  }
 
   return (
     <View style={styles.container}>

@@ -93,7 +93,7 @@ function TriageCard({ complaint, isSelected, onSelect, onDispatch }: TriageCardP
               {getTierLabel(aiAnalysis.logisticsTier)}
             </span>
           </div>
-          {aiAnalysis.hazardFlags.length > 0 && (
+          {aiAnalysis.hazardFlags?.length > 0 && (
             <div className="mt-1.5 flex gap-1 flex-wrap">
               {aiAnalysis.hazardFlags.map((flag) => (
                 <span

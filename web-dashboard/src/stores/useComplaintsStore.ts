@@ -219,7 +219,17 @@ export const useComplaintsStore = create<ComplaintsState>((set) => ({
     set({ mapViewport: { latitude, longitude, zoom: 15 } }),
   updateComplaintStatus: async (id, status) => {
     try {
-      await delay(400); // Simulate API call
+      const res = await fetch(`http://localhost:3000/api/v1/internal/complaints/${id}/status`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-ai-service-secret': 'ellipse-ai-webhook-secret-67890' 
+        },
+        body: JSON.stringify({ status })
+      });
+      
+      if (!res.ok) throw new Error("Failed to update status on server");
+      
       set((state) => ({
         complaints: state.complaints.map((c) =>
           c.id === id ? { ...c, status } : c

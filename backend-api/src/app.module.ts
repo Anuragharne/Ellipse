@@ -7,6 +7,7 @@ import { StorageModule } from './storage/storage.module';
 import { ComplaintsModule } from './complaints/complaints.module';
 import { BullModule } from '@nestjs/bullmq';
 import { InternalModule } from './internal/internal.module';
+import { CrewModule } from './crew/crew.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { InternalModule } from './internal/internal.module';
         url: process.env.REDIS_URL || 'redis://localhost:6379',
       },
     }),
+    CrewModule,
   ],
   controllers: [AppController],
   providers: [AppService],

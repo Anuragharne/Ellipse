@@ -63,14 +63,15 @@ class GarbageDetector:
         )
         
         results = []
-        for i in indices:
-            idx = i if isinstance(i, int) else i[0]
-            box = boxes[idx].tolist()
-            score = float(predictions[idx, 4])
-            results.append({
-                "box": box,
-                "confidence": score
-            })
+        if len(indices) > 0:
+            indices = np.array(indices).flatten()
+            for idx in indices:
+                box = boxes[idx].tolist()
+                score = float(predictions[idx, 4])
+                results.append({
+                    "box": box,
+                    "confidence": score
+                })
             
         return results
 
